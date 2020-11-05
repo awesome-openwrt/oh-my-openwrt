@@ -477,9 +477,9 @@ set_repo(){
         return
     fi
 
-    # 替换官方仓库地址为教育网高速镜像源
+    # 替换官方仓库地址为国内镜像站点
     org_url="http://downloads.openwrt.org"
-    # mirror_url="https://openwrt.proxy.ustclug.org"
+    # 北京外国语学院镜像站(推荐)
     mirror_url="https://mirrors.bfsu.edu.cn/openwrt"
     if [ `grep -c "$mirror_url" repositories.conf` -eq 0 ]; then
         sed -i "s@$org_url@$mirror_url@g" repositories.conf
