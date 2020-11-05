@@ -413,7 +413,6 @@ do_build_ipks(){
     ## factory ##
     make package/luci-app-autoreboot/compile V=s
     make package/luci-app-ramfree/compile V=s
-    make package/luci-app-netdata/compile V=s
     make package/luci-app-ssr-plus/compile V=s
     make package/luci-app-passwall/compile V=s
 
@@ -547,7 +546,8 @@ do_build_bin(){
     fi
 
     # 查看自定义软件包 ./scripts/feeds list -r awesome
-    awesome_factory_pkgs="luci-app-ramfree luci-app-autoreboot luci-i18n-autoreboot-zh-cn"
+    #awesome_factory_pkgs="luci-app-ramfree luci-app-autoreboot luci-i18n-autoreboot-zh-cn"
+    awesome_factory_pkgs=""
 
     # make args setting
     image_pkgs="$org_original_pkgs $org_custom_pkgs $awesome_factory_pkgs"
