@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source basic.sh
+source scripts/basic.sh
 
 # if error occured, then exit
 set -e
@@ -133,11 +133,11 @@ if [ ! -d $device_path ]; then
 fi
 
 ######################## set env ########################
+# image-builder
 imagebuilder_path="$device_path/$version/imagebuilder"
 if [ ! -d $imagebuilder_path ]; then
     mkdir -p $imagebuilder_path
 fi
-# image builder
 pre_imagebuilder(){
     if [ "$(ls -A $imagebuilder_path)" ]; then
         echo -e "$INFO imagebuilder already set done!"
@@ -179,7 +179,7 @@ pre_sdk(){
 }
 pre_sdk
 
-# archive dir
+# artifact
 ipk_path="$sdk_path/bin/packages/$cpu_arch"
 bin_path="$imagebuilder_path/bin/targets/$cpu1/$cpu2"
 artifact_root_path="$build_root_path/artifacts/$version"
