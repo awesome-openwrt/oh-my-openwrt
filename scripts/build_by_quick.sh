@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 
-BOLD="\033[1m"
-NORM="\033[0m"
-INFO="$BOLD Info: $NORM"
-INPUT="$BOLD => $NORM"
-ERROR="\033[31m *** Error: $NORM"
-WARNING="\033[33m * Warning: $NORM"
+source basic.sh
 
 # if error occured, then exit
 set -e
 
-# info
-# device_type: 1 软路由, 2 小米路由器青春版, 3 Newifi3
-echo -e "$INFO Awesome OpenWrt oh-my-openwrt 当前支持以下路由器设备:"
+# 选择设备
+# device_type:
+# 1 软路由
+# 2 小米路由器青春版
+# 3 Newifi3
+info "Awesome OpenWrt oh-my-openwrt 当前支持以下路由器设备:"
 echo
 echo "        1. 软路由"
 echo "        2. 小米路由器青春版"
@@ -22,7 +20,7 @@ echo "        0. 取消"
 echo
 
 while true; do
-    echo -n -e "$INPUT"
+    echo -n -e "$INPUT "
     read -p "请选择路由器设备类型: " yn
     echo
     case $yn in
@@ -34,13 +32,53 @@ while true; do
     esac
 done
 
+# 选择编译版本
+# openwrt_version:
+# 1、18.06.8
+# 2、19.07.3
+# 3、19.07.4
+info "Awesome OpenWrt oh-my-openwrt 当前支持编译以下版本:"
+echo
+echo "        1. 18.06.8"
+echo "        2. 19.07.3"
+echo "        3. 19.07.4"
+echo
+echo "        0. 取消"
+echo
+
+while true; do
+    echo -n -e "$INPUT "
+    read -p "请选择编译版本: " yn
+    echo
+    case $yn in
+        1 ) openwrt_version=1; break;;
+        2 ) openwrt_version=2; break;;
+        3 ) openwrt_version=3; break;;
+        0  | "") echo -e "$INFO End!"; exit;;
+        * ) echo "输入 0-9 以确认";;
+    esac
+done
+
 my_packages_url="https://github.com/awesome-openwrt/openwrt-packages"
 
-gen_device_desc(){
-    version="19.07.3"
-    gcc_version="7.5.0"
-    img_ext=".bin"
+gen_version_desc(){
+    if [ $openwrt_version -eq 1 ]; then
+        version="18.06.8"
+        gcc_version="7.3.0"
+    elif [ $openwrt_version -eq 2 ]; then
+        version="19.07.3"
+        gcc_version="7.5.0"
+    elif [ $openwrt_version -eq 3 ]; then
+        version="19.07.4"
+        gcc_version="7.5.0"
+    else
+        echo -e "$INFO End!"
+        exit
+    fi
+}
+gen_version_desc
 
+gen_device_desc(){
     if [ $device_type -eq 1 ]; then
         device="x86_64"
         cpu1="x86"
@@ -54,71 +92,64 @@ gen_device_desc(){
         cpu2="mt76x8"
         cpu_arch="mipsel_24kc"
         device_profile="miwifi-nano"
+        img_ext=".bin"
     elif [ $device_type -eq 3 ]; then
         device="newifi3"
         cpu1="ramips"
         cpu2="mt7621"
         cpu_arch="mipsel_24kc"
         device_profile="d-team_newifi-d2"
+        img_ext=".bin"
     else
         echo -e "$INFO End!"
         exit
     fi
-
-    # OpenWrt 官方
-    # base_url="http://downloads.openwrt.org"
-    # 清华大学镜像站
-    # base_url="https://mirrors.tuna.tsinghua.edu.cn/openwrt"
-    # 中科大镜像站
-    # base_url="https://mirrors.ustc.edu.cn/lede"
-    # 教育网高速镜像站
-    # base_url="https://openwrt.proxy.ustclug.org"
-    base_url="https://mirrors.bfsu.edu.cn/openwrt"
-    
-    imagebuilder_url="$base_url/releases/$version/targets/$cpu1/$cpu2/openwrt-imagebuilder-$version-$cpu1-$cpu2.Linux-x86_64.tar.xz"
-    sdk_url="$base_url/releases/$version/targets/$cpu1/$cpu2/openwrt-sdk-$version-$cpu1-${cpu2}_gcc-${gcc_version}_musl.Linux-x86_64.tar.xz"
 }
-
 gen_device_desc
 
-# prepare
-if [ ! -d build ]; then
-    mkdir -p build
-fi
+# OpenWrt 官方
+# base_url="http://downloads.openwrt.org"
+# 清华大学镜像站
+# base_url="https://mirrors.tuna.tsinghua.edu.cn/openwrt"
+# 中科大镜像站
+# base_url="https://mirrors.ustc.edu.cn/lede"
+# 中科大 - 日本大阪镜像站
+# base_url="https://openwrt.proxy.ustclug.org"
+# 北京外国语学院镜像站(推荐)
+base_url="https://mirrors.bfsu.edu.cn/openwrt"
+# imagebuilder and sdk url
+imagebuilder_url="$base_url/releases/$version/targets/$cpu1/$cpu2/openwrt-imagebuilder-$version-$cpu1-$cpu2.Linux-x86_64.tar.xz"
+sdk_url="$base_url/releases/$version/targets/$cpu1/$cpu2/openwrt-sdk-$version-$cpu1-${cpu2}_gcc-${gcc_version}_musl.Linux-x86_64.tar.xz"
+
+# prepare basic path
 script_root_path=`pwd`
-cd build
-
-# path
-root_path=`pwd`
-device_path="$root_path/$device"
-sdk_folder="sdk-$version"
-sdk_path="$device_path/$sdk_folder"
-ipk_path="$sdk_path/bin/packages/$cpu_arch"
-imagebuilder_folder="imagebuilder-$version"
-imagebuilder_path="$device_path/$imagebuilder_folder"
-bin_path="$imagebuilder_path/bin/targets/$cpu1/$cpu2"
-artifact_root_path="$root_path/artifacts/$version"
-artifact_bin_path="$artifact_root_path/targets/$device"
-artifact_ipk_path="$artifact_root_path/packages"
-
-# prepare
-if [ ! -d $device ]; then
-    mkdir -p $device
+build_root_path="$script_root_path/build"
+device_path="$build_root_path/$device"
+if [ ! -d $build_root_path ]; then
+    mkdir -p $build_root_path
 fi
-cd $device_path
+if [ ! -d $device_path ]; then
+    mkdir -p $device_path
+fi
 
 ######################## set env ########################
+imagebuilder_path="$device_path/$version/imagebuilder"
+if [ ! -d $imagebuilder_path ]; then
+    mkdir -p $imagebuilder_path
+fi
 # image builder
 pre_imagebuilder(){
-    if [ -d $imagebuilder_folder ]; then
+    if [ "$(ls -A $imagebuilder_path)" ]; then
         echo -e "$INFO imagebuilder already set done!"
     else
+        cd $device_path
         echo "download imagebuilder..."
         wget -O imagebuilder.tar.xz -t 5 -T 60 $imagebuilder_url
         echo "download imagebuilder done."
         echo "extract imagebuilder..."
         tar -xvf imagebuilder.tar.xz 1>/dev/null 2>&1
-        mv openwrt-imagebuilder-$version-* $imagebuilder_folder
+        rm -rf $imagebuilder_path
+        mv openwrt-imagebuilder-$version-*/ $imagebuilder_path/
         rm -f imagebuilder.tar.xz
         echo -e "$INFO imagebuilder set done."
     fi
@@ -126,33 +157,40 @@ pre_imagebuilder(){
 pre_imagebuilder
 
 # sdk
+sdk_path="$device_path/$version/sdk"
+if [ ! -d $sdk_path ]; then
+    mkdir -p $sdk_path
+fi
 pre_sdk(){
-    if [ -d $sdk_folder ]; then
+    if [ "$(ls -A $sdk_path)" ]; then
         echo -e "$INFO sdk already set done!"
     else
+        cd $device_path
         echo "download sdk..."
         wget -O sdk.tar.xz -t 5 -T 60 $sdk_url
         echo "download sdk done."
         echo "extract sdk..."
         tar -xvf sdk.tar.xz 1>/dev/null 2>&1
-        mv openwrt-sdk-$version-* $sdk_folder
-        rm -rf sdk.tar.xz
+        rm -rf $sdk_path
+        mv openwrt-sdk-$version-*/ $sdk_path/
+        rm -f sdk.tar.xz
         echo -e "$INFO sdk set done."
     fi
 }
 pre_sdk
 
 # archive dir
+ipk_path="$sdk_path/bin/packages/$cpu_arch"
+bin_path="$imagebuilder_path/bin/targets/$cpu1/$cpu2"
+artifact_root_path="$build_root_path/artifacts/$version"
+artifact_bin_path="$artifact_root_path/targets/$device"
+artifact_ipk_path="$artifact_root_path/packages"
 pre_archive_dir(){
     ## dir bins
     if [ ! -d $bin_path ]; then
         mkdir -p $bin_path
     fi
-    # # 软链接，方便快速查看
-    # if [ ! -L $device_path/bins ]; then
-    #     ln -s $bin_path $device_path/bins
-    # fi
-    # 归档构建产物
+    # 归档构建产物 bin
     if [ ! -d $artifact_bin_path ]; then
         mkdir -p $artifact_bin_path
     fi
@@ -160,11 +198,7 @@ pre_archive_dir(){
     if [ ! -d $ipk_path/awesome ]; then
         mkdir -p $ipk_path/awesome
     fi
-    # # 软链接，方便快速查看
-    # if [ ! -L $device_path/ipks ]; then
-    #     ln -s $ipk_path $device_path/ipks
-    # fi
-    # 归档构建产物
+    # 归档构建产物 ipk
     if [ ! -d $artifact_ipk_path ]; then
         mkdir -p $artifact_ipk_path
     fi
