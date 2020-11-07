@@ -31,14 +31,14 @@ done
 
 # 选择编译版本
 # openwrt_version:
-# 1、18.06.8
+# 1、19.07.4
 # 2、19.07.3
-# 3、19.07.4
+# 3、18.06.8
 info "Awesome OpenWrt oh-my-openwrt 当前支持编译以下版本:"
 echo
-# echo "        1. 18.06.8"
+echo "        1. 19.07.4"
 echo "        2. 19.07.3"
-echo "        3. 19.07.4"
+# echo "        3. 18.06.8"
 echo
 echo "        0. 取消"
 echo
@@ -48,9 +48,9 @@ while true; do
     read -p "请选择编译版本: " yn
     echo
     case $yn in
-        # 1 ) openwrt_version=1; break;;
+        1 ) openwrt_version=1; break;;
         2 ) openwrt_version=2; break;;
-        3 ) openwrt_version=3; break;;
+        # 3 ) openwrt_version=3; break;;
         0  | "") echo -e "$INFO End!"; exit;;
         * ) echo "输入 0-9 以确认";;
     esac
@@ -58,14 +58,14 @@ done
 
 gen_version_desc(){
     if [ $openwrt_version -eq 1 ]; then
-        version="18.06.8"
-        gcc_version="7.3.0"
+        version="19.07.4"
+        gcc_version="7.5.0"
     elif [ $openwrt_version -eq 2 ]; then
         version="19.07.3"
         gcc_version="7.5.0"
     elif [ $openwrt_version -eq 3 ]; then
-        version="19.07.4"
-        gcc_version="7.5.0"
+        version="18.06.8"
+        gcc_version="7.3.0"
     else
         echo -e "$INFO End!"
         exit
