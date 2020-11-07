@@ -223,12 +223,30 @@ add_packages2feeds(){
 }
 add_packages2feeds
 
+# 修复 go 版本过低无法编译 v2ray-core 的问题 @https://github.com/coolsnowwolf/lede/issues/5719
+fix_v2ray_version(){
+    pushd feeds/packages/lang
+    rm -fr golang
+    svn co https://github.com/coolsnowwolf/packages/trunk/lang/golang
+    popd
+}
+
+# 修复 kcptun 版本过低的问题
+fix_kcptun_version(){
+    pushd feeds/packages/net
+    rm -fr kcptun
+    git clone https://github.com/coolsnowwolf/packages/trunk/net/kcptun
+    popd
+}
+
 # prepare feeds (update and install)
 do_pre_feeds(){
     echo "update/install feeds..."
     cd $sdk_path
     # rm -rf feeds/awesome*
-    ./scripts/feeds update -a && ./scripts/feeds install -a
+    ./scripts/feeds update -a
+    fix_v2ray_version
+    ./scripts/feeds install -a
     # ./scripts/feeds update awesome && ./scripts/feeds install -a -p awesome
     echo -e "$INFO update/install feeds done!"
 }
