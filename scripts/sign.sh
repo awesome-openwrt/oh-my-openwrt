@@ -109,8 +109,20 @@ if [ ! -d $build_root_path ]; then
     mkdir -p $build_root_path
 fi
 
-######################## set env ########################
-signtool_path="$build_root_path/sign/$version"
+######################## set env ########################//////ﬁ
+# OpenWrt 官方
+# base_url="http://downloads.openwrt.org"
+# 清华大学镜像站
+# base_url="https://mirrors.tuna.tsinghua.edu.cn/openwrt"
+# 中科大镜像站
+# base_url="https://mirrors.ustc.edu.cn/lede"
+# 中科大 - 日本大阪镜像站
+# base_url="https://openwrt.proxy.ustclug.org"
+# 北京外国语学院镜像站(推荐)
+base_url="https://mirrors.bfsu.edu.cn/openwrt"
+# signtoool_url
+signtoool_url="$base_url/releases/$version/targets/ramips/mt76x8/openwrt-sdk-$version-ramips-mt76x8_gcc-${gcc_version}_musl.Linux-x86_64.tar.xz"
+signtool_path="$build_root_path/tools/$version/sign"
 if [ ! -d $signtool_path ]; then
     mkdir -p $signtool_path
 fi
@@ -120,7 +132,7 @@ pre_signtool(){
     else
         cd $build_root_path
         echo "set signtool..."
-        wget -O sdk.tar.xz -t 5 -T 60 https://mirrors.ustc.edu.cn/lede/releases/$version/targets/ramips/mt76x8/openwrt-sdk-$version-ramips-mt76x8_gcc-${gcc_version}_musl.Linux-x86_64.tar.xz
+        wget -O sdk.tar.xz -t 5 -T 60 $signtoool_url
         echo "download signtool done."
         echo "extract signtool..."
         tar -xvf sdk.tar.xz 1>/dev/null 2>&1
