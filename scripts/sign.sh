@@ -115,7 +115,7 @@ if [ ! -d $signtool_path ]; then
     mkdir -p $signtool_path
 fi
 pre_signtool(){
-    if [ -d $signtool_path ]; then
+    if [ "$(ls -A $signtool_path)" ]; then
         echo -e "$INFO signtool already set done!"
     else
         cd $build_root_path
