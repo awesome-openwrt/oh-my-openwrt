@@ -456,7 +456,7 @@ set_repo(){
 }
 
 do_build_bin(){
-    echo "build $build_type bin begin..."
+    echo "build bin begin..."
 
     cd $imagebuilder_path
 
@@ -479,19 +479,20 @@ do_build_bin(){
 
     set_repo
 
-    # fix Imagebuilder: "opkg_install_pkg: Package size mismatch" error
-    # @https://bugs.openwrt.org/index.php?do=details&task_id=2690&status%5B0%5D=
-    for f in dl/openwrt_*; do
-        zcat $f | sed -ne '/^Filename:/s/.* //p' -e '/^SHA256sum:/s/.* //p' | while read file; do
-            read sum
-            if [ -f dl/$file ]; then
-                read sum1 junk < <(sha256sum dl/$file)
-                if [ $sum != $sum1 ]; then
-                    rm -f dl/$file
-                fi
-            fi
-        done
-    done
+    # fix bug for 19.07.3
+    # # fix Imagebuilder: "opkg_install_pkg: Package size mismatch" error
+    # # @https://bugs.openwrt.org/index.php?do=details&task_id=2690&status%5B0%5D=
+    # for f in dl/openwrt_*; do
+    #     zcat $f | sed -ne '/^Filename:/s/.* //p' -e '/^SHA256sum:/s/.* //p' | while read file; do
+    #         read sum
+    #         if [ -f dl/$file ]; then
+    #             read sum1 junk < <(sha256sum dl/$file)
+    #             if [ $sum != $sum1 ]; then
+    #                 rm -f dl/$file
+    #             fi
+    #         fi
+    #     done
+    # done
 
     # 查看固件已安装软件包 echo $(opkg list_installed | awk '{ print $1 }')
     if [ $device == "xiaomi" ]; then
@@ -516,7 +517,7 @@ do_build_bin(){
     # make image
     make image PROFILE=$device_profile PACKAGES="${image_pkgs}" FILES=$files_path
     
-    echo -e "$INFO build $build_type bin done!"
+    echo -e "$INFO build bin done!"
 }
 build_bin(){
     while true; do
