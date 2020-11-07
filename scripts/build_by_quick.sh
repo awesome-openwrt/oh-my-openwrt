@@ -13,8 +13,8 @@ set -e
 info "Awesome OpenWrt oh-my-openwrt 当前支持以下路由器设备:"
 echo
 echo "        1. 软路由"
-echo "        2. 小米路由器青春版"
-echo "        3. Newifi3"
+# echo "        2. 小米路由器青春版"
+# echo "        3. Newifi3"
 echo
 echo "        0. 取消"
 echo
@@ -25,8 +25,8 @@ while true; do
     echo
     case $yn in
         1 ) device_type=1; break;;
-        2 ) device_type=2; break;;
-        3 ) device_type=3; break;;
+        # 2 ) device_type=2; break;;
+        # 3 ) device_type=3; break;;
         0  | "") echo -e "$INFO End!"; exit;;
         * ) echo "输入 0-9 以确认";;
     esac
