@@ -22,7 +22,6 @@ do_install_dep_awesome(){
 
 # install build dependency
 ## @https://github.com/coolsnowwolf/lede
-## @https://github.com/esirplayground/lede
 do_install_dep_lean(){
     echo "install build dependency for lean begin..."
     sudo apt update

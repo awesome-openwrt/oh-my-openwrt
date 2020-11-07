@@ -39,7 +39,7 @@ done
 # 3、19.07.4
 info "Awesome OpenWrt oh-my-openwrt 当前支持编译以下版本:"
 echo
-echo "        1. 18.06.8"
+# echo "        1. 18.06.8"
 echo "        2. 19.07.3"
 echo "        3. 19.07.4"
 echo
@@ -51,7 +51,7 @@ while true; do
     read -p "请选择编译版本: " yn
     echo
     case $yn in
-        1 ) openwrt_version=1; break;;
+        # 1 ) openwrt_version=1; break;;
         2 ) openwrt_version=2; break;;
         3 ) openwrt_version=3; break;;
         0  | "") echo -e "$INFO End!"; exit;;

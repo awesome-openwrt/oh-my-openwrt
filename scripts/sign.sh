@@ -34,54 +34,103 @@ while true; do
     esac
 done
 
-gen_device_desc(){
-    version="19.07.3"
-    gcc_version="7.5.0"
+# 选择编译版本
+# openwrt_version:
+# 1、18.06.8
+# 2、19.07.3
+# 3、19.07.4
+info "Awesome OpenWrt oh-my-openwrt 当前支持编译以下版本:"
+echo
+# echo "        1. 18.06.8"
+echo "        2. 19.07.3"
+echo "        3. 19.07.4"
+echo
+echo "        0. 取消"
+echo
 
-    if [ $device_type -eq 1 ]; then
-        device="x86_64"
-        cpu_arch="x86_64"
-    elif [ $device_type -eq 2 ]; then
-        device="xiaomi"
-        cpu_arch="mipsel_24kc"
-    elif [ $device_type -eq 3 ]; then
-        device="newifi3"
-        cpu_arch="mipsel_24kc"
+while true; do
+    echo -n -e "$INPUT "
+    read -p "请选择编译版本: " yn
+    echo
+    case $yn in
+        # 1 ) openwrt_version=1; break;;
+        2 ) openwrt_version=2; break;;
+        3 ) openwrt_version=3; break;;
+        0  | "") echo -e "$INFO End!"; exit;;
+        * ) echo "输入 0-9 以确认";;
+    esac
+done
+
+gen_version_desc(){
+    if [ $openwrt_version -eq 1 ]; then
+        version="18.06.8"
+        gcc_version="7.3.0"
+    elif [ $openwrt_version -eq 2 ]; then
+        version="19.07.3"
+        gcc_version="7.5.0"
+    elif [ $openwrt_version -eq 3 ]; then
+        version="19.07.4"
+        gcc_version="7.5.0"
     else
         echo -e "$INFO End!"
         exit
     fi
 }
+gen_version_desc
 
+gen_device_desc(){
+    if [ $device_type -eq 1 ]; then
+        device="x86_64"
+        # cpu1="x86"
+        # cpu2="64"
+        cpu_arch="x86_64"
+        # device_profile="Generic"
+        # img_ext=".img.gz"
+    elif [ $device_type -eq 2 ]; then
+        device="xiaomi"
+        # cpu1="ramips"
+        # cpu2="mt76x8"
+        cpu_arch="mipsel_24kc"
+        # device_profile="miwifi-nano"
+        # img_ext=".bin"
+    elif [ $device_type -eq 3 ]; then
+        device="newifi3"
+        # cpu1="ramips"
+        # cpu2="mt7621"
+        cpu_arch="mipsel_24kc"
+        # device_profile="d-team_newifi-d2"
+        # img_ext=".bin"
+    else
+        echo -e "$INFO End!"
+        exit
+    fi
+}
 gen_device_desc
 
-# prepare
-if [ ! -d build ]; then
-    mkdir -p build
-fi
+# prepare basic path
 script_root_path=`pwd`
-cd build
-
-# path
-root_path=`pwd`
-singtool_folder="signtool-$version"
-signtool_path="$root_path/$singtool_folder"
-artifact_root_path="$root_path/artifacts/$version"
-artifact_bin_path="$artifact_root_path/targets/$device"
-artifact_ipk_path="$artifact_root_path/packages"
+build_root_path="$script_root_path/build"
+if [ ! -d $build_root_path ]; then
+    mkdir -p $build_root_path
+fi
 
 ######################## set env ########################
+signtool_path="$sign_root_path/sign/$version"
+if [ ! -d $signtool_path ]; then
+    mkdir -p $signtool_path
+fi
 pre_signtool(){
-    cd $root_path
     if [ -d $signtool_path ]; then
         echo -e "$INFO signtool already set done!"
     else
+        cd $build_root_path
         echo "set signtool..."
         wget -O sdk.tar.xz -t 5 -T 60 https://mirrors.ustc.edu.cn/lede/releases/$version/targets/ramips/mt76x8/openwrt-sdk-$version-ramips-mt76x8_gcc-${gcc_version}_musl.Linux-x86_64.tar.xz
         echo "download signtool done."
         echo "extract signtool..."
         tar -xvf sdk.tar.xz 1>/dev/null 2>&1
-        mv openwrt-sdk-$version-* $singtool_folder
+        rm -rf $signtool_path
+        mv openwrt-sdk-$version-*/ $signtool_path/
         rm -rf sdk.tar.xz
         echo -e "$INFO set signtool done."
     fi
@@ -129,7 +178,7 @@ do_sign(){
     $signtool_path/scripts/ipkg-make-index.sh . 2>/dev/null > Packages.manifest
     grep -vE '^(Maintainer|LicenseFiles|Source|Require)' Packages.manifest > Packages
     gzip -9nc Packages > Packages.gz
-    $signtool_path/staging_dir/host/bin/usign -S -m Packages -s $root_path/openwrt-awesome.key
+    $signtool_path/staging_dir/host/bin/usign -S -m Packages -s $build_root_path/openwrt-awesome.key
 }
 sign_ipks(){
     echo "sign ipks begin..."
@@ -152,8 +201,11 @@ sign_ipks(){
     
     echo -e "$INFO sign ipks done."
 }
+artifact_root_path="$build_root_path/artifacts/$version"
+artifact_bin_path="$artifact_root_path/targets/$device"
+artifact_ipk_path="$artifact_root_path/packages"
 sign_dir_ipks(){
-    artifact_path="$root_path/artifacts"
+    artifact_path="$build_root_path/artifacts"
 
     if [ $index_type -eq 1 ]; then
         artifact_root_path="$artifact_path/$version"
@@ -167,9 +219,9 @@ sign_dir_ipks(){
 }
 
 # gen key
-if [ ! -e $root_path/openwrt-awesome.key ]; then
+if [ ! -e $build_root_path/openwrt-awesome.key ]; then
     echo "openwrt-awesome.key gen..."
-    $signtool_path/staging_dir/host/bin/usign -G -p $root_path/openwrt-awesome.pub -s $root_path/openwrt-awesome.key
+    $signtool_path/staging_dir/host/bin/usign -G -p $build_root_path/openwrt-awesome.pub -s $build_root_path/openwrt-awesome.key
     echo -e "$INFO openwrt-awesome.key gen done!"
 fi
 
