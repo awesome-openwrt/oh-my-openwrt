@@ -110,7 +110,7 @@ if [ ! -d $build_root_path ]; then
 fi
 
 ######################## set env ########################
-signtool_path="$sign_root_path/sign/$version"
+signtool_path="$build_root_path/sign/$version"
 if [ ! -d $signtool_path ]; then
     mkdir -p $signtool_path
 fi
