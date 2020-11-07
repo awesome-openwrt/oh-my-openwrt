@@ -375,76 +375,19 @@ do_build_ipks(){
 
     # 查看自定义软件包 ./scripts/feeds list -r awesome
 
-    # make package/luci-app-adbyby-plus/compile V=s
-    # make package/luci-app-aliddns/compile V=s
-    # make package/luci-app-arpbind/compile V=s
-    # make package/luci-app-autoreboot/compile V=s
-    # make package/luci-app-clash/compile V=s
-    # make package/luci-app-control-mia/compile V=s
-    # make package/luci-app-control-timewol/compile V=s
-    # make package/luci-app-control-webrestriction/compile V=s
-    # make package/luci-app-control-weburl/compile V=s
-    # make package/luci-app-fileassistant/compile V=s
-    # make package/luci-app-flowoffload/compile V=s
-    # make package/luci-app-ipsec-vpnserver/compile V=s
-    # make package/luci-app-netdata/compile V=s
-    # make package/luci-app-openclash/compile V=s
-    # make package/luci-app-passwall/compile V=s
-    # make package/luci-app-passwall-mini/compile V=s
-    # make package/luci-app-pptp-vpnserver/compile V=s
-    # make package/luci-app-ramfree/compile V=s
-    # make package/luci-app-smartdns/compile V=s
-    # make package/luci-app-ssr-plus/compile V=s
-    # make package/luci-app-ssr-plus-mini/compile V=s
-    # make package/luci-app-syncthing/compile V=s
-    # make package/luci-app-usb-printer/compile V=s
-    # make package/luci-app-vlmcsd/compile V=s
-    # make package/luci-app-webadmin/compile V=s
-    # make package/luci-app-xlnetacc/compile V=s
+    make package/luci-app-adbyby-plus/compile V=s
+    make package/luci-app-aliddns/compile V=s
+    make package/luci-app-arpbind/compile V=s
+    make package/luci-app-autoreboot/compile V=s
+    make package/luci-app-ramfree/compile V=s
 
-    # make package/adbyby/compile V=s
-    # make package/brook/compile V=s
-    # make package/chinadns-ng/compile V=s
-    # make package/ddns-scripts_aliyun/compile V=s
-    # make package/dns2socks/compile V=s
-    # make package/ipt2socks/compile V=s
-    # make package/kcptun/compile V=s
-    # make package/luci-i18n-sqm/compile V=s
-    # make package/microsocks/compile V=s
-    # make package/pdnsd-alt/compile V=s
-    # make package/redsocks2/compile V=s
-    # make package/shadowsocksr-libev/compile V=s
-    # make package/simple-obfs/compile V=s
-    # make package/smartdns/compile V=s
-    # make package/syncthing/compile V=s
-    # make package/tcping/compile V=s
-    # make package/tcpping/compile V=s
-    # make package/trojan/compile V=s
-    # make package/v2ray/compile V=s
-    # make package/v2ray-plugin/compile V=s
-    # make package/vlmcsd/compile V=s
+    make package/luci-app-passwall/compile V=s
+    make package/luci-app-ssr-plus/compile V=s
+
 
     ################# end build for detail ######################
 
     echo -e "$INFO build ipks done!"
-
-    ## factory ##
-    make package/luci-app-autoreboot/compile V=s
-    make package/luci-app-ramfree/compile V=s
-    make package/luci-app-ssr-plus/compile V=s
-    make package/luci-app-passwall/compile V=s
-
-    ## test ##
-    # 
-    # make package/luci-app-ssr-plus-mini/compile V=s
-    # make package/luci-app-passwall-mini/compile V=s
-    # 
-    # make package/luci-app-ssr-plus/compile V=s
-    # make package/luci-app-passwall/compile V=s
-    # make package/luci-app-adbyby-plus/compile V=s
-    # make package/luci-app-smartdns/compile V=s
-    # make package/luci-app-netdata/compile V=s
-
 }
 build_ipks(){
     while true; do
