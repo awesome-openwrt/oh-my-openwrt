@@ -384,7 +384,6 @@ do_build_ipks(){
     make package/luci-app-passwall/compile V=s
     make package/luci-app-ssr-plus/compile V=s
 
-
     ################# end build for detail ######################
 
     echo -e "$INFO build ipks done!"
