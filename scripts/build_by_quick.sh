@@ -59,8 +59,6 @@ while true; do
     esac
 done
 
-my_packages_url="https://github.com/awesome-openwrt/openwrt-packages"
-
 gen_version_desc(){
     if [ $openwrt_version -eq 1 ]; then
         version="18.06.8"
@@ -214,6 +212,7 @@ pre_archive_dir
 
 ######################## feeds update and install ########################
 # add packages to feeds.conf
+my_packages_url="https://github.com/awesome-openwrt/openwrt-packages"
 add_packages2feeds(){
     # import awesome code to sdk
     if [ `grep -c "src-git awesome $my_packages_url" $sdk_path/feeds.conf.default` -eq 0 ]; then
