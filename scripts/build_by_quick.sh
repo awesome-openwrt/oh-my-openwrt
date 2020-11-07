@@ -235,7 +235,7 @@ fix_v2ray_version(){
 fix_kcptun_version(){
     pushd feeds/packages/net
     rm -fr kcptun
-    git clone https://github.com/coolsnowwolf/packages/trunk/net/kcptun
+    svn co https://github.com/coolsnowwolf/packages/trunk/net/kcptun
     popd
 }
 
@@ -246,6 +246,7 @@ do_pre_feeds(){
     # rm -rf feeds/awesome*
     ./scripts/feeds update -a
     fix_v2ray_version
+    fix_kcptun_version
     ./scripts/feeds install -a
     # ./scripts/feeds update awesome && ./scripts/feeds install -a -p awesome
     echo -e "$INFO update/install feeds done!"
